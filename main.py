@@ -1,4 +1,4 @@
-import cv2, numpy as np, pypylon, tensorflow as tf
+import cv2, numpy as np, tensorflow
 
 
 def main():
@@ -8,7 +8,7 @@ def main():
     # Create and initialize LaTex image to code mappingss
     # Open "notepad"
     while True: 
-        # while the user is running this program
+        # while the user is running this progra
 
         # user writes something
         # 2-3 second delay for the user to finish what they're writing
