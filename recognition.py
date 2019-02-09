@@ -25,3 +25,21 @@ class Recognition(object):
             activation = tf.nn.relu
         )
 
+        #Initializing 1st pooling layer
+        pool_1 = tf.layers.max_pooling2d(inputs = layer_1, pool_size = [2, 2], strides = 2)
+
+        #Initializng 2nd convolutional layer
+        layer_2 = tf.layers.conv2d(
+            inputs = pool_1,
+            filters = 64,
+            kernel_size = [5, 5],k
+            padding = "same",
+            activation = tf.nn.relu
+        )
+
+        #Initializing 2nd pooling layer
+        pool_2 = tf.layers.max_pooling2d(inputs = layer_2, pool_size = [2, 2], strides = 2)
+        flatten_pool2 = tf.reshape(pool_2, [-1, pool_2.size])
+
+
+
