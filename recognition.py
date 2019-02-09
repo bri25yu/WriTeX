@@ -32,7 +32,7 @@ class Recognition(object):
         layer_2 = tf.layers.conv2d(
             inputs = pool_1,
             filters = 64,
-            kernel_size = [5, 5],k
+            kernel_size = [5, 5],
             padding = "same",
             activation = tf.nn.relu
         )
