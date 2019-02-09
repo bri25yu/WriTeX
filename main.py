@@ -1,11 +1,10 @@
-import cv2, numpy as np, pypylon
-
+import loadLatex, recognition, UI
 
 def main():
     """
     Main method for
     """
-    
+
     # Create and initialize LaTex image to code mappings
     load_latex()
 
