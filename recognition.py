@@ -5,6 +5,7 @@ from tensorflow.python.keras.optimizers import *
 from tensorflow.python.keras.utils import to_categorical
 from multiprocessing.dummy import Pool as ThreadPool 
 import os
+import time
 
 # Default training and testing data directories:
 TRAIN_DIR, TEST_DIR = 'C:\\Users\\bri25\\Documents\\Python\\data\\', None
@@ -100,22 +101,31 @@ class Network:
         self.reset_data_labels()
         symbol_names = os.listdir(self.train_dir)
         self.num_classes = len(symbol_names)
+        
+        self.NUM_THREADS = 50
+        start_50 = time.time()
 
         pool = ThreadPool(self.NUM_THREADS)
+        args = self.get_pool_args(symbol_names)
+        pool.starmap(self.process_symbol_directory, args)
+        total_50 = (time.time() - start_50)*pow(10, 3) # time in ms
+        self.NUM_THREADS = 100
+        start_100 = time.time()
+        pool = ThreadPool(self.NUM_THREADS)
+        args = self.get_pool_args(symbol_names)
+        pool.starmap(self.process_symbol_directory, args)
+        total_100 = (time.time() - start_50)*pow(10, 3) # time in ms
+
+        print("Finished loading data")
         if not self.test_dir:
-            args = self.get_pool_args(symbol_names)
-            pool.starmap(self.process_symbol_directory, args)
-            print("Finished loading data")
             self.get_test_from_training()
-            self.categorize_labels()           
         else:
-            # ! TODO: fix lmao this definitely does NOT work
-            testing_data, testing_labels = np.array([]), np.array([])
-            for symbol_name in symbol_names:
-                image_files = os.listdir(self.test_dir + symbol_name)
-                for i in range(len(image_files)):
-                    testing_data.append(np.array(cv2.imread(self.test_dir + symbol_name + '\\' + image_files[i])))
-                    testing_labels.append(ord(symbol_name))
+            testing_data, testing_labels = [], []
+            # data = os.listdir(self.test_dir)
+            # for file in data:
+            #     testing_data.append(np.array(cv2.imread(self.test_dir + symbol_name + '\\' + image_files[i])))
+            #     testing_labels.append(ord(symbol_name))
+        self.categorize_labels()
         print("Finished process data")
 
     def get_layers(self):
@@ -146,19 +156,20 @@ class Network:
         """
         Call the model training function. 
         """
+        self.model.fit(np.array(self.training_data), np.array(self.training_labels), epochs=epochs, 
+                        batch_sizse=batch_size, shuffle=True)
+        self.evaluate_model()
+
+    def evaluate_model(self, test_data = None, test_labels = None):
         past_best_model = load_model(self.save_dir + 'model')
         best_loss, best_acc = past_best_model.evaluate(np.array(self.testing_data), np.array(self.testing_labels))
-        self.model.fit(np.array(self.training_data), np.array(self.training_labels), epochs=epochs, 
-                        batch_size=batch_size, shuffle=True)
         curr_loss, curr_acc = self.model.evaluate(np.array(self.testing_data), np.array(self.testing_labels))
-        if curr_loss * curr_acc >= best_loss * best_acc:
+        print("Current loss: " + str(curr_loss), "Current accuracy: " + str(curr_acc))
+        if curr_acc/curr_loss >= best_acc/best_loss:
             print("Best run yet!")
             save_model(self.model, self.save_dir + 'model', overwrite=True, include_optimizer=True)
             best_loss, best_acc = curr_loss, curr_acc
-
-    def evaluate_model(self, testing_data, testing_labels):
-        # TODO: Finish later!
-        pass
+        
 
     def implement(self):
         print("Cnn success")
@@ -167,7 +178,7 @@ def main(TRAIN_DIR,
          SAVE_DIR, 
          TEST_DIR, 
          train = False,
-         implementing = False,
+         implementing = False, 
          controller = None,   
          epochs = 10, 
          batch_size = 1024, 
@@ -181,10 +192,19 @@ def main(TRAIN_DIR,
     if train:
         my_network.train_model(epochs = epochs, batch_size = batch_size)
     elif implementing:
-        my_network.load_model()
-        controller.set_CNN(my_network)
+        # my_network.load_model()
+        my_network.evaluate_model(test_data, test_labels)
+        # controller.set_CNN(my_network)
     else:
-        my_network.evaluate_model(epochs, batch_size, testing_data, testing_labels)
+        # my_network.evaluate_model(epochs, batch_size, testing_data, testing_labels)
+        pass
 
 if __name__ == '__main__':
-    main(TRAIN_DIR, SAVE_DIR, TEST_DIR)
+    test_data_dir = 'C:\\Users\\bri25\\Desktop\\'
+    filenames = os.listdir(test_data_dir)
+    test_data, test_labels = [], []
+    for fname in filenames:
+        test_data.append(cv2.imread(test_data_dir + fname))
+        test_labels.append('sum')
+    main(TRAIN_DIR, SAVE_DIR, TEST_DIR, implementing = True, testing_data=test_data, testing_labels=test_labels)
+    # main(TRAIN_DIR, SAVE_DIR, TEST_DIR, train=True)

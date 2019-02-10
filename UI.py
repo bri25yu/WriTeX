@@ -10,7 +10,7 @@ class Ui_MainWindow(object):
         self.textEdit = QTextEdit()
 
         # variables for placement of images
-        self.x = 200
+        self.x = 325
         self.y = 20
 
         # variable for iteration 
@@ -22,20 +22,20 @@ class Ui_MainWindow(object):
         Setup buttons for user. 
         """
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(40, 62, 280, 62))
+        self.pushButton.setGeometry(QtCore.QRect(40, 62, 240, 50))
         self.pushButton.setObjectName("pushButton")
 
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(40, 124, 280, 62))
+        self.pushButton_3.setGeometry(QtCore.QRect(40, 124, 240, 50))
         self.pushButton_3.setObjectName("pushButton_3")
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 900)
+        MainWindow.resize(1920, 1080)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.backgroundBox = QtWidgets.QLabel(self.centralwidget)
-        self.backgroundBox.setGeometry(QtCore.QRect(0,0,1000,900))
+        self.backgroundBox.setGeometry(QtCore.QRect(-300,0,1800, 1000))
         self.backgroundBox.setText("")
         self.backgroundBox.setObjectName("backgroundBox")
         self.setBackground() 
@@ -46,13 +46,13 @@ class Ui_MainWindow(object):
         self.imageBox_array = []
         for i in range(99):
             self.imageBox_array.append(QtWidgets.QLabel(self.centralwidget))
-            self.imageBox_array[i].setGeometry(QtCore.QRect(200, 20, 750, 650))
+            self.imageBox_array[i].setGeometry(QtCore.QRect(200, 20, 450, 450))
             self.imageBox_array[i].setText("")
             self.imageBox_array[i].setObjectName("imageBox")
            
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 480, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 1080))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         displays it on screen
         adjacent number of images, max: 4 images
 
-        should implement conversion of image to LaTex
+        should implement conversion of image to LaTeX
         '''
 
         self.file_array.append("")
@@ -99,9 +99,9 @@ class Ui_MainWindow(object):
             self.imageBox_array[self.imageNum].setGeometry(QtCore.QRect(self.x, self.y, self.pixmap.size().width(), self.pixmap.size().height()))
             self.imageNum += 1
  
-            if self.x >= 746:
-                self.x =  200 - self.pixmap.size().width() - 10
-                self.y += self.pixmap.size().width() * 2  - 28
+            if self.x >= 1500:
+                self.x =  325
+                self.y += self.pixmap.size().width() + 28
             self.x += self.pixmap.size().width() + 10
    
     def setBackground(self):
@@ -152,5 +152,8 @@ def main(controller):
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    controller.set_ui(ui)
+    # controller.set_ui(ui)
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main(None)
