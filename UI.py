@@ -34,11 +34,9 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(20, 20, 140, 31))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(20, 60, 140, 31))
-        self.pushButton_2.setObjectName("pushButton_2")
+
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(20, 100, 140, 31))
+        self.pushButton_3.setGeometry(QtCore.QRect(20, 60, 140, 31))
         self.pushButton_3.setObjectName("pushButton_3")
 
         # set the image boxes
@@ -71,7 +69,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Submit Image"))
-        self.pushButton_2.setText(_translate("MainWindow", "Process "))
         self.pushButton_3.setText(_translate("MainWindow", "Download Latex"))
 
 
@@ -80,6 +77,8 @@ class Ui_MainWindow(object):
         takes chosen image from computer
         displays it on screen
         adjacent number of images, max: 4 images
+
+        should implement conversion of image to LaTex
         '''
 
 
@@ -98,7 +97,7 @@ class Ui_MainWindow(object):
  
             if self.x >= 746:
                 self.x =  200 - self.pixmap.size().width() - 10
-                self.y += self.pixmap.size().width() * 2  - 20
+                self.y += self.pixmap.size().width() * 2  - 28
             self.x += self.pixmap.size().width() + 10
    
 
