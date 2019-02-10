@@ -63,6 +63,7 @@ def process_data(train_dir, test_dir = None):
     If the data set only has one set of data, training is AUTOMATICALLY the first 95% of the data
     """
 
+    TESTING_TO_TRAINING_RATIO = 0.95
     symbol_names = os.listdir(train_dir)
     training_data, training_labels, testing_data, testing_labels = [], [], [], []
 
@@ -70,7 +71,7 @@ def process_data(train_dir, test_dir = None):
         for symbol_name in symbol_names:
             image_files = os.listdir(train_dir + symbol_name)
             i = 0
-            while i < int(0.95*len(image_files)):
+            while i < int(TESTING_TO_TRAINING_RATIO*len(image_files)):
                 training_data.append(cv2.imread(train_dir + symbol_name + '\\' + image_files[i]))
                 training_labels.append(symbol_name)
                 i+=1
