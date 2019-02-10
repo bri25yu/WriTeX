@@ -11,14 +11,17 @@ def main():
     train_dir, test_dir = 'C:\\Users\\bri25\\Documents\\Python\\data\\', None
     # Get training and testing data.
 
-    classifier = tf.estimator.Estimator(model_fn = create_cnn, model_dir = "/tmp/mnist_convnet_model")
+    recognition = Recognition()
+
+
+    classifier = tf.estimator.Estimator(model_fn = recognition.create_cnn, model_dir = "/tmp/mnist_convnet_model")
     log = {"Probabilities" : "softmax result"}
     logging_hook = tf.train.LoggingTensorHook(tensors = log, every_n_iter = 50)
 
     # Train network using data
     train_input = tf.estimator.inputs.numpy_input_fn(
-        x = {"x" : training_data},
-        y = training_labels,
+        x = {"x" : recognition.get_training_data()[0]},
+        y = recognition.get_training_data()[1],
         batch_size = 500,
         num_epochs = None,
         shuffle = True
@@ -26,14 +29,14 @@ def main():
 
     # Classify and evaluate weights
     classifier.train(
-        input_fn = train_cnn,
+        input_fn = recognition.train_cnn,
         steps = 1,
         hooks = [logging_hook]
     )
 
     eval_input = tf.estimator.inputs.numpy_input_fn(
-        x = {"x" : eval_input},
-        y = eval_labels,
+        x = {"x" : recognition.get_testing_data()[0]},
+        y = recognition.get_testing_data()[1],
         batch_size = 500,
         num_epochs = 1,
         shuffle = False

@@ -6,8 +6,8 @@ class Recognition:
     Creates and trains the convolutional neural network for image recognition
     '''
 
-    def __init__ (self, features, labels, mode):
-        create_cnn(features, labels, mode)
+    def __init__ (self):
+        pass
 
     def feed_data(self, data):
         """
