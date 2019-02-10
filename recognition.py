@@ -1,6 +1,6 @@
 import tensorflow as tf, numpy as np, cv2
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential, save_model
 from tensorflow.python.keras.optimizers import *
 from tensorflow.python.keras.utils import to_categorical
 import os
@@ -50,9 +50,9 @@ class Network:
         self.symbol_to_val = {}
 
         if not self.test_dir:
-            # for symbol_name in symbol_names:
-            for i in range(self.temp_data_range):
-                symbol_name = symbol_names[i]
+            for symbol_name in symbol_names:
+            # for i in range(self.temp_data_range):
+                # symbol_name = symbol_names[i]
                 image_files = os.listdir(self.train_dir + symbol_name)
                 for j in range(len(image_files)):
                     self.append_data(self.training_data, self.training_labels, self.train_dir + symbol_name + '\\' + image_files[j], i)
@@ -67,6 +67,7 @@ class Network:
                     testing_data.append(np.array(cv2.imread(self.test_dir + symbol_name + '\\' + image_files[i])))
                     testing_labels.append(ord(symbol_name))
             self.validation_data = tuple([testing_data, testing_labels])
+
         self.training_labels = np.reshape(np.array(self.training_labels), (len(self.training_labels), 1))
         self.training_labels = to_categorical(self.training_labels, num_classes=self.temp_data_range)
         print("Finish process data")
@@ -108,12 +109,13 @@ class Network:
         else:
             self.model.fit(np.array(self.training_data), np.array(self.training_labels), epochs=epochs, 
                             batch_size=batch_size, shuffle=True, validation_split=self.TRAINING_TO_TESTING_RATIO)
+        save_model(self.model, 'data/model', overwrite=True, include_optimizer=True)
 
 def main(TRAIN_DIR, TEST_DIR):
     my_network = Network(TRAIN_DIR, TEST_DIR)
     my_network.create_model()
     my_network.process_data()
-    my_network.train_model()
+    my_network.train_model(epochs = 20, batch_size = 1024)
 
 if __name__ == '__main__':
     main(TRAIN_DIR, TEST_DIR)
