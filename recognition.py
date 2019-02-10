@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow as tf, numpy as np
 
 '''
 Creates and trains the convolutional neural network for image recognition
@@ -62,7 +62,7 @@ def create_cnn (features, labels, mode):
     if mode == tf.estimator.ModeKeys.TRAIN:
         optimizer = tf.train.GradientDescentOptimizer(learning_rate = 0.001)
         train_op = optimizer.minimize(
-            loss = loss,
+            loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits), #also try just =loss
             global_step = tf.train.get_global_step())
         return tf.estimator.EstimatorSpec(mode = mode, loss = loss, train_op = train_op)
 
@@ -72,4 +72,13 @@ def create_cnn (features, labels, mode):
 
     return tf.estimator.EstimatorSpec(
             mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
-        
+    
+# Trains and back-propagates weights given data
+
+def get_data():
+
+def train_cnn():
+    ((training_data, (training_labels)), (eval_data, eval_labels)) = get_data()
+    training_data /= np.float32(255)
+    eval_data /= np.float32(255)
+
