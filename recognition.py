@@ -6,8 +6,10 @@ class Recognition:
     Creates and trains the convolutional neural network for image recognition
     '''
 
-    def __init__ (self):
-        pass
+    def __init__ (self, features, labels, mode):
+        self.features = features
+        self.labels = labels
+        self.mode = mode
 
     def feed_data(self, data):
         """
@@ -19,7 +21,8 @@ class Recognition:
         assert type(data[1]) == tuple, "Testing data is not a tuple"
 
         self.training_data, self.training_labels = data[0][0], data[0][1]
-        self.testing_data, self.testing_labels = data[1][0], data[1, 1]
+        self.testing_data, self.testing_labels = data[1][0], data[1][1]
+        print("Data fed")
 
     def get_training_data (self):
         """
@@ -34,6 +37,7 @@ class Recognition:
         return (self.testing_data, self.testing_labels)
 
     def create_cnn (self, features, labels, mode):
+        print("Creating cnn\n\n\n\n\n\n\n\n\n\n\n\n")
         self.labels, self.mode = labels, mode
         # Initializes input layer
         input_layer = tf.reshape(features["x"], [-1, 28, 28])
@@ -81,8 +85,8 @@ class Recognition:
         self.logits = tf.layers.dense(inputs = rectify, units = 36)
 
         self.predictions = {
-            "classes": tf.argmax(input = logits, axis = 1),
-            "probabilities": tf.nn.softmax(logits, name = "softmax_tensor")
+            "classes": tf.argmax(input = self.logits, axis = 1),
+            "probabilities": tf.nn.softmax(self.logits, name = "softmax_tensor")
         }
         
     def predict(self):
@@ -100,7 +104,7 @@ class Recognition:
     def train_cnn(self):
         # Trains and back-propagates weights given data
         self.training_data /= np.float32(255)
-        self.eval_data /= np.float32(255)
+        self.testing_data /= np.float32(255)
         
         # For training and back-propagating weights
         if self.mode == tf.estimator.ModeKeys.TRAIN:
