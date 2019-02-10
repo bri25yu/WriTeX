@@ -1,5 +1,5 @@
 import numpy as np, tensorflow as tf
-import recognition
+from recognition import *
 
 
 def main():
