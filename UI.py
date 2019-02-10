@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 
 class Ui_MainWindow(object):
-    
+
     def __init__(self):
         self.file_array = []
         self.textEdit = QTextEdit()
@@ -62,7 +62,12 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         # actions executed when buttons are clicked
-        self.pushButton.clicked.connect(self.setImage)
+        def button1_pushed():
+            """ Function wrapper class for multiple actions within one 
+                "button clicked" call. """
+            file_added = True
+            self.setImage()
+        self.pushButton.clicked.connect(button1_pushed)
         self.pushButton_3.clicked.connect(self.saveImage)
 
     def retranslateUi(self, MainWindow):
@@ -97,8 +102,6 @@ class Ui_MainWindow(object):
                 self.y += self.pixmap.size().width() * 2  - 28
             self.x += self.pixmap.size().width() + 10
    
-
-  
     def setBackground(self):
         '''
         sets the background
@@ -109,18 +112,16 @@ class Ui_MainWindow(object):
         self.backgroundBox.setAlignment(QtCore.Qt.AlignCenter)
    
     def saveImage(self):
-
         '''
         Waits for user input for filename, then appends the image filetype ".png"
             in order to preserve alpha channels fo rhigher quality pictures. 
         e.g. user inputs "my_image", file should save in "my_image.png"
         '''
-
         for file in self.file_array:
             self.pixmap = QtGui.QPixmap(file)
             fname, _ = QFileDialog.getSaveFileName(None, "Save Image")
             self.pixmap.save(fname + '.png', quality = 100)
-
+    
 def main():
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -145,11 +146,4 @@ def main():
 
     app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
     
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    main()
+    return app
