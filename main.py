@@ -15,6 +15,37 @@ def main():
     log = {"Probabilities" : "softmax result"}
     logging_hook = tf.train.LoggingTensorHook(tensors = log, every_n_iter = 50)
 
+    # Train network using data
+    train_input = tf.estimator.inputs.numpy_input_fn(
+        x = {"x" : training_data},
+        y = training_labels,
+        batch_size = 500,
+        num_epochs = None,
+        shuffle = True
+    )
+
+    # Classify and evaluate weights
+    classifier.train(
+        input_fn = train_cnn,
+        steps = 1,
+        hooks = [logging_hook]
+    )
+
+    eval_input = tf.estimator.inputs.numpy_input_fn(
+        x = {"x" : eval_input},
+        y = eval_labels,
+        batch_size = 500,
+        num_epochs = 1,
+        shuffle = False
+    )
+
+    #Output evaluation results
+    evaluation = classifier.evaluate(input_fn = eval_input)
+    print(evaluation)
+
+    
+
+
     while False: 
         # while the user is running this program
 
