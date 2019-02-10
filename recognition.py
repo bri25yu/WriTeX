@@ -75,11 +75,9 @@ def create_cnn (features, labels, mode):
     
 # Trains and back-propagates weights given data
 
-def get_data():
-    pass
 
 def train_cnn():
-    ((training_data, (training_labels)), (eval_data, eval_labels)) = get_data()
+    ((training_data, training_labels), (eval_data, eval_labels)) = get_data()
     training_data /= np.float32(255)
     eval_data /= np.float32(255)
 
