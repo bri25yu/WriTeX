@@ -160,10 +160,15 @@ class Network:
         # TODO: Finish later!
         pass
 
+    def implement(self):
+        print("Cnn success")
+
 def main(TRAIN_DIR, 
          SAVE_DIR, 
          TEST_DIR, 
-         train = False, 
+         train = False,
+         implementing = False,
+         controller = None,   
          epochs = 10, 
          batch_size = 1024, 
          testing_data = None, 
@@ -175,6 +180,9 @@ def main(TRAIN_DIR,
     my_network.create_model()
     if train:
         my_network.train_model(epochs = epochs, batch_size = batch_size)
+    elif implementing:
+        my_network.load_model()
+        controller.set_CNN(my_network)
     else:
         my_network.evaluate_model(epochs, batch_size, testing_data, testing_labels)
 

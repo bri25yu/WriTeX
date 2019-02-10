@@ -15,6 +15,7 @@ class Ui_MainWindow(object):
 
         # variable for iteration 
         self.imageNum = 0
+        self.file_added = False
 
     def setup_buttons(self):
         """
@@ -65,7 +66,8 @@ class Ui_MainWindow(object):
         def button1_pushed():
             """ Function wrapper class for multiple actions within one 
                 "button clicked" call. """
-            file_added = True
+            self.file_added = True
+            print("file added")
             self.setImage()
         self.pushButton.clicked.connect(button1_pushed)
         self.pushButton_3.clicked.connect(self.saveImage)
@@ -122,8 +124,9 @@ class Ui_MainWindow(object):
             fname, _ = QFileDialog.getSaveFileName(None, "Save Image")
             self.pixmap.save(fname + '.png', quality = 100)
     
-def main():
+def main(controller):
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
     dark_palette = QPalette()
@@ -143,7 +146,11 @@ def main():
     dark_palette.setColor(QPalette.HighlightedText, Qt.black)
 
     app.setPalette(dark_palette)
-
     app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
-    
-    return app
+
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    controller.set_ui(ui)
+    sys.exit(app.exec_())
