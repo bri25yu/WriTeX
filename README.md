@@ -1,7 +1,7 @@
 # HackDavis-19
 
-WriTex
+WriTeX
 
-Students and professionals in the sciences often use LaTex to formally and cleanly display their work and ideas. However, LaTex contains a slight learning curve; WriTex attempts to alleviate any sort of learning curve by being fully accessible to anyone, even those with no experience with LaTex. 
+Students and professionals often use LaTeX to formally and cleanly display their work and ideas in a standardized format. However, LaTeX often contains a learning curve on the order of magnitude of several tens of hours; WriTeX alleviates this learning curve by being fully accessible to anyone interested in converting their written work directly into a LaTeX file.
 
-WriTex takes in an image or real-time handwriting of text and symbols and converts it into LaTex code that can be later used to generate a PDF file. 
+WriTeX takes in an image of handwritten text and symbols and converts it into LaTeX code that can be utilized in a more universal fashion. 
