@@ -1,4 +1,4 @@
-# HackDavis-19
+# WriTeX
 
 WriTeX
 
