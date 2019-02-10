@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:\Users\satiy\Desktop\test.ui'
-#
-# Created by: PyQt5 UI code generator 5.11.3
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QTextEdit
+from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel
 
 class Ui_MainWindow(object):
     
@@ -22,7 +15,11 @@ class Ui_MainWindow(object):
         MainWindow.resize(1000, 900)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-
+        self.backgroundBox = QtWidgets.QLabel(self.centralwidget)
+        self.backgroundBox.setGeometry(QtCore.QRect(0,0,1000,900))
+        self.backgroundBox.setText("")
+        self.backgroundBox.setObjectName("backgroundBox")
+        self.setBackground() 
 
         #set the buttons
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -38,7 +35,6 @@ class Ui_MainWindow(object):
 
         self.imageBox = QtWidgets.QLabel(self.centralwidget)
         self.imageBox.setGeometry(QtCore.QRect(220, 20, 700, 800))
-        # self.imageBox.setFrameShape(QtWidgets.QFrame.Box)
         self.imageBox.setText("")
         self.imageBox.setObjectName("imageBox")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -54,7 +50,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-        # button functions
+        # actions executed when buttons are clicked
         self.pushButton.clicked.connect(self.setImage)
         self.pushButton_3.clicked.connect(self.saveImage)
 
@@ -75,7 +71,13 @@ class Ui_MainWindow(object):
             print("pixmap size after resize to imagebox size" + str(self.pixmap.size()))
             self.imageBox.setPixmap(self.pixmap)
             self.imageBox.setAlignment(QtCore.Qt.AlignCenter)
-
+  
+    def setBackground(self):
+        pixmap = QtGui.QPixmap('images/WXBackground.png')
+        pixmap = pixmap.scaled(self.backgroundBox.width(), self.backgroundBox.height(), QtCore.Qt.KeepAspectRatio)
+        self.backgroundBox.setPixmap(pixmap)
+        self.backgroundBox.setAlignment(QtCore.Qt.AlignCenter)
+   
     def saveImage(self):
         '''
         Waits for user input for filename, then appends the image filetype ".png"
