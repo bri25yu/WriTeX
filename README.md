@@ -1,6 +1,6 @@
 # HackDavis-19
 
-WriTex
+WriTeX
 
 Students and professionals in the sciences often use LaTeX to formally and cleanly display their work and ideas. However, LaTeX contains a learning curve on the order of magnitude of several tens of hours; WriTeX attempts to alleviate this learning curve by being fully accessible to anyone, even those with no experience with LaTeX. 
 
