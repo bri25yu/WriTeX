@@ -1,4 +1,4 @@
-import cv2, numpy as np, tensorflow
+import numpy as np, tensorflow as tf, recognition
 
 
 def main():
@@ -7,7 +7,8 @@ def main():
     """
     # Create and initialize LaTex image to code mappingss
     # Open "notepad"
-    while True: 
+
+    while False: 
         # while the user is running this progra
 
         # user writes something
@@ -18,6 +19,7 @@ def main():
 
         #user has option to resize things
         pass
+
 
 
 if __name__ == '__main__':
