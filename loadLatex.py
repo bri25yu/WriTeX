@@ -39,7 +39,7 @@ symDict = {
     "Θ":"\\Theta",
     "Π":"\\Pi",
     "Φ":"\\Phi",
-    "∑":"\sum",
+    "∑":"\\sum",
     "⋂":"\\bigcap",
     "⊙":"\bigodot",
     "∏":"\\prod",
