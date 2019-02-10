@@ -1,4 +1,5 @@
-import pylon, tensorflow as tf
+import pylon
+import tensorflow as tf
 
 '''
 Text recognition using Convolutional Neural Networks and Tensorflow
@@ -14,7 +15,7 @@ class Recognition(object):
 
     def create_cnn(self, features, labels, mode):
         #Initializing input layer
-        input_layer = tf.reshape(features["x"], [self.batch_size, self.image_height, self.image_width])
+        input_layer = tf.reshape(features["x"], [-1, 28, 28])
 
         #Initializing 1st convolutional layer
         layer_1 = tf.layers.conv2d(
