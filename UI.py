@@ -1,4 +1,3 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import * # QFileDialog, QTextEdit, QLabel, QPushButton
 from PyQt5.QtGui import *
@@ -7,10 +6,8 @@ from PyQt5.QtCore import Qt
 class Ui_MainWindow(object):
     
     def __init__(self):
-        
         self.file_array = []
         self.textEdit = QTextEdit()
-
 
         # variables for placement of images
         self.x = 200
@@ -19,9 +16,19 @@ class Ui_MainWindow(object):
         # variable for iteration 
         self.imageNum = 0
 
+    def setup_buttons(self):
+        """
+        Setup buttons for user. 
+        """
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(40, 62, 280, 62))
+        self.pushButton.setObjectName("pushButton")
+
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(40, 124, 280, 62))
+        self.pushButton_3.setObjectName("pushButton_3")
+
     def setupUi(self, MainWindow):
-
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 900)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -32,14 +39,7 @@ class Ui_MainWindow(object):
         self.backgroundBox.setObjectName("backgroundBox")
         self.setBackground() 
 
-        # set the buttons
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(20, 20, 140, 31))
-        self.pushButton.setObjectName("pushButton")
-
-        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(20, 60, 140, 31))
-        self.pushButton_3.setObjectName("pushButton_3")
+        self.setup_buttons()
 
         # set the image boxes
         self.imageBox_array = []
@@ -49,7 +49,6 @@ class Ui_MainWindow(object):
             self.imageBox_array[i].setText("")
             self.imageBox_array[i].setObjectName("imageBox")
            
-
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 480, 18))
@@ -62,7 +61,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
         # actions executed when buttons are clicked
         self.pushButton.clicked.connect(self.setImage)
         self.pushButton_3.clicked.connect(self.saveImage)
@@ -71,8 +69,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Submit Image"))
-        self.pushButton_3.setText(_translate("MainWindow", "Download LaTeX"))
-
+        self.pushButton_3.setText(_translate("MainWindow", "Download LaTeX PDF"))
 
     def setImage(self):
         '''
@@ -82,8 +79,6 @@ class Ui_MainWindow(object):
 
         should implement conversion of image to LaTex
         '''
-
-
 
         self.file_array.append("")
         self.file_array[self.imageNum], _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "",
@@ -126,8 +121,7 @@ class Ui_MainWindow(object):
             fname, _ = QFileDialog.getSaveFileName(None, "Save Image")
             self.pixmap.save(fname + '.png', quality = 100)
 
-
-if __name__ == "__main__":
+def main():
     import sys
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
@@ -156,3 +150,6 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

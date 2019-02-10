@@ -156,11 +156,14 @@ class Network:
             save_model(self.model, self.save_dir + 'model', overwrite=True, include_optimizer=True)
             best_loss, best_acc = curr_loss, curr_acc
 
-def main(TRAIN_DIR, SAVE_DIR, TEST_DIR):
+    def evaluate_model(self):
+        pass
+
+def main(TRAIN_DIR, SAVE_DIR, TEST_DIR, train = False, epochs = 10, batch_size = 1024):
     my_network = Network(TRAIN_DIR, SAVE_DIR, TEST_DIR)
     my_network.process_data()
     my_network.create_model()
-    my_network.train_model(epochs = 10, batch_size = 1024)
+    my_network.train_model(epochs = epochs, batch_size = batch_size)
 
 if __name__ == '__main__':
     main(TRAIN_DIR, SAVE_DIR, TEST_DIR)
