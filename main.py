@@ -26,7 +26,17 @@ def main():
         y = recognition.get_training_data()[1],
         batch_size = 500,
         num_epochs = None,
-        shuffle = True
+        shuffle = True,
+        num_threads = 10
+    )
+
+    # Create test 
+    test_input = tf.estimator.inputs.numpy_input_fn(
+        x = {"x" : recognition.get_testing_data()[0]},
+        y = recognition.get_testing_data()[1],
+        num_epochs = 1,
+        shuffle = False,
+        num_threads = 10
     )
 
     print("Training network")
@@ -82,11 +92,11 @@ def process_data(train_dir, test_dir = None):
             image_files = os.listdir(train_dir + symbol_name)
             i = 0
             while i < int(TESTING_TO_TRAINING_RATIO*len(image_files)):
-                training_data.append(cv2.imread(train_dir + symbol_name + '\\' + image_files[i]))
+                training_data.append(np.array(cv2.imread(train_dir + symbol_name + '\\' + image_files[i])))
                 training_labels.append(symbol_name)
                 i+=1
             while i < len(image_files):
-                testing_data.append(cv2.imread(train_dir + symbol_name + '\\' + image_files[i]))
+                testing_data.append(np.array(cv2.imread(train_dir + symbol_name + '\\' + image_files[i])))
                 testing_labels.append(symbol_name)
                 i+=1
     else:
