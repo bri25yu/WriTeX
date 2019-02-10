@@ -1,70 +1,89 @@
 import tensorflow as tf, numpy as np, cv2
-from tensorflow.keras import layers
+from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.optimizers import RMSprop
+import os, sys
+
+# Default training and testing data directories:
+TRAIN_DIR, TEST_DIR = 'C:\\Users\\bri25\\Documents\\Python\\data\\', None
 
 class Network:
     """
     Wrapper class for the CNN
     """
 
-    def __init__(self):
+    def __init__(self, train_dir, test_dir=None):
         """
-        Empty constructor for this wrapper class!
+        Enable "eager execution"
+        Set the training and testing data directories. 
         """
-        pass
+        # tf.enable_eager_execution()
+        self.train_dir = train_dir + ("\\" if train_dir[-1] == "\\" else "")
+        if test_dir:
+            self.test_dir = test_dir + ("\\" if test_dir[-1] == "\\" else "")
+        else: 
+            self.test_dir = test_dir
 
-    def process_data(train_dir, test_dir = None):
+    def process_data(self, batch_size = 500):
         """
+        This function takes the directories specified in the constructor and turns them into tf.datasets
+
         If the data set given only has one set of data, use 95% for training and the other 5% for testing/validation.
         If the data set only has one set of data, training is AUTOMATICALLY the first 95% of the data
         """
         print("Begin process data")
-        TESTING_TO_TRAINING_RATIO = 0.95
-        symbol_names = os.listdir(train_dir)
-        training_data, training_labels, testing_data, testing_labels = [], [], [], []
 
-        if not test_dir:
+        self.batch_size = batch_size
+
+        TRAINING_TO_TESTING_RATIO = 0.95
+        symbol_names = os.listdir(self.train_dir)
+        self.training_data, self.training_labels, self.testing_data, self.testing_labels = [], [], [], []
+
+        if not self.test_dir:
             # for symbol_name in symbol_names:
             for i in range(2):
                 symbol_name = symbol_names[i]
-                print(symbol_name)
-                image_files = os.listdir(train_dir + symbol_name)
+                image_files = os.listdir(self.train_dir + symbol_name)
                 i = 0
-                while i < int(TESTING_TO_TRAINING_RATIO*len(image_files)):
-                    training_data.append(np.array(cv2.imread(train_dir + symbol_name + '\\' + image_files[i])))
-                    training_labels.append(symbol_name)
+                while i < int(TRAINING_TO_TESTING_RATIO*len(image_files)):
+                    self.training_data.append(np.array(cv2.imread(self.train_dir + symbol_name + '\\' + image_files[i])))
+                    self.training_labels.append(symbol_name)
                     i+=1
                 while i < len(image_files):
-                    testing_data.append(np.array(cv2.imread(train_dir + symbol_name + '\\' + image_files[i])))
-                    testing_labels.append(symbol_name)
+                    self.testing_data.append(np.array(cv2.imread(self.train_dir + symbol_name + '\\' + image_files[i])))
+                    self.testing_labels.append(symbol_name)
                     i+=1
         else:
             # Since this is a first iteration and we only have a singular set of data 
             #   (i.e. no official test data), it will automatically default to separating the 
             #   testing and training data as above. 
             pass
+
         print("Finish process data")
-        return ((training_data, training_labels), (testing_data, testing_labels))
+
+    def get_layers(self):
+        """
+        Set the layers of the CNN as "logits" and "predictions"
+        """
+        IMAGE_SIZE = 28
+        self.model.add(Conv2D(64, 5, input_shape = (IMAGE_SIZE, IMAGE_SIZE, 3), padding="same", activation='relu'))
+        self.model.add(MaxPooling2D(pool_size = 2, strides = 2))
+        
+        for i in range(1):
+            self.model.add(Conv2D(64, 5, padding="same", activation='relu'))
+            self.model.add(MaxPooling2D(pool_size = 2, strides = 2))
+
+        self.model.add(Flatten())
+        self.model.add(Dense(128, activation = 'relu'))
+        self.model.add(Dropout(0.4))
+        self.model.add(Dense(54, activation='softmax'))
 
     def create_model(self):
-        self.model = tf.keras.Sequential([
-            # Adds a densely-connected layer with 64 units to the model:
-            layers.Dense(64, activation='relu', input_shape=(32,)),
-            # Add another:
-            layers.Dense(64, activation='relu'),
-            # Add a softmax layer with 10 output units:
-            layers.Dense(10, activation='softmax')
-            ])
-
-        self.model.compile(optimizer=tf.train.RMSPropOptimizer(0.01),
-              loss=tf.keras.losses.categorical_crossentropy,
-              metrics=[tf.keras.metrics.categorical_accuracy])
-
-    def set_training_data(self, training_data, training_labels):
-        """
-        Sets the object's training data and training labels. 
-        """
-        self.training_data = training_data
-        self.training_labels = training_labels
+        self.model = Sequential()
+        self.get_layers()
+        self.model.compile(optimizer=RMSprop(lr=0.01),
+              loss="categorical_crossentropy",
+              metrics=["accuracy"])
     
     def set_testing_data(self, testing_data, testing_labels):
         """
@@ -77,20 +96,10 @@ class Network:
         Call the model training function. 
         """
         self.model.fit(self.training_data, self.training_labels, epochs=epochs, 
-                        batch_size=batch_size, validation_data = self.validation_data
-                        )
+                        batch_size=batch_size, validation_data = self.validation_data)
 
 if __name__ == '__main__':
-    my_network = Network()
+    my_network = Network(TRAIN_DIR, TEST_DIR)
     my_network.create_model()
-
-    data = np.random.random((1000, 32))
-    labels = np.random.random((1000, 10))
-
-    val_data = np.random.random((100, 32))
-    val_labels = np.random.random((100, 10))
-
-    my_network.set_training_data(data, labels)
-    my_network.set_testing_data(val_data, val_labels)
-
-    my_network.train_model(batch_size=32)
+    my_network.process_data()
+    my_network.train_model()
