@@ -5,8 +5,17 @@ from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel
 class Ui_MainWindow(object):
     
     def __init__(self):
-        self.fileName = ""
+        
+        self.file_array = []
         self.textEdit = QTextEdit()
+
+
+        # variables for placement of images
+        self.x = 200
+        self.y = 20
+
+        # variable for iteration 
+        self.imageNum = 0
 
     def setupUi(self, MainWindow):
 
@@ -21,22 +30,24 @@ class Ui_MainWindow(object):
         self.backgroundBox.setObjectName("backgroundBox")
         self.setBackground() 
 
-        #set the buttons
+        # set the buttons
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(20, 20, 140, 31))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(20, 60, 140, 31))
-        self.pushButton_2.setObjectName("pushButton_2")
+
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(20, 100, 140, 31))
+        self.pushButton_3.setGeometry(QtCore.QRect(20, 60, 140, 31))
         self.pushButton_3.setObjectName("pushButton_3")
 
+        # set the image boxes
+        self.imageBox_array = []
+        for i in range(99):
+            self.imageBox_array.append(QtWidgets.QLabel(self.centralwidget))
+            self.imageBox_array[i].setGeometry(QtCore.QRect(200, 20, 750, 650))
+            self.imageBox_array[i].setText("")
+            self.imageBox_array[i].setObjectName("imageBox")
+           
 
-        self.imageBox = QtWidgets.QLabel(self.centralwidget)
-        self.imageBox.setGeometry(QtCore.QRect(220, 20, 700, 800))
-        self.imageBox.setText("")
-        self.imageBox.setObjectName("imageBox")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 480, 18))
@@ -58,34 +69,60 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "Submit Image"))
-        self.pushButton_2.setText(_translate("MainWindow", "Process "))
         self.pushButton_3.setText(_translate("MainWindow", "Download Latex"))
 
+
     def setImage(self):
-        print("imageBox size: " + str(self.imageBox.size()))
-        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.bmp)")
-        if self.fileName: 
-            self.pixmap = QtGui.QPixmap(self.fileName)
-            print("pixmap size before resize to imagebox size" + str(self.pixmap.size()))
-            self.pixmap = self.pixmap.scaled(self.imageBox.width(), self.imageBox.height(), QtCore.Qt.KeepAspectRatio)
-            print("pixmap size after resize to imagebox size" + str(self.pixmap.size()))
-            self.imageBox.setPixmap(self.pixmap)
-            self.imageBox.setAlignment(QtCore.Qt.AlignCenter)
+        '''
+        takes chosen image from computer
+        displays it on screen
+        adjacent number of images, max: 4 images
+
+        should implement conversion of image to LaTex
+        '''
+
+
+
+        self.file_array.append("")
+        self.file_array[self.imageNum], _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "",
+                                           "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        if self.file_array[self.imageNum]: 
+            self.pixmap = QtGui.QPixmap(self.file_array[self.imageNum])
+            self.pixmap = self.pixmap.scaled(self.imageBox_array[self.imageNum].width()/2,
+                                             self.imageBox_array[self.imageNum].height()/2, 
+                                             QtCore.Qt.KeepAspectRatio)
+            self.imageBox_array[self.imageNum].setPixmap(self.pixmap)
+            self.imageBox_array[self.imageNum].setGeometry(QtCore.QRect(self.x, self.y, self.pixmap.size().width(), self.pixmap.size().height()))
+            self.imageNum += 1
+ 
+            if self.x >= 746:
+                self.x =  200 - self.pixmap.size().width() - 10
+                self.y += self.pixmap.size().width() * 2  - 28
+            self.x += self.pixmap.size().width() + 10
+   
+
   
     def setBackground(self):
+        '''
+        sets the background
+        '''
         pixmap = QtGui.QPixmap('images/WXBackground.png')
         pixmap = pixmap.scaled(self.backgroundBox.width(), self.backgroundBox.height(), QtCore.Qt.KeepAspectRatio)
         self.backgroundBox.setPixmap(pixmap)
         self.backgroundBox.setAlignment(QtCore.Qt.AlignCenter)
    
     def saveImage(self):
+
         '''
         Waits for user input for filename, then appends the image filetype ".png"
             in order to preserve alpha channels fo rhigher quality pictures. 
         e.g. user inputs "my_image", file should save in "my_image.png"
         '''
-        fname, _ = QFileDialog.getSaveFileName(None, "Save Image")
-        self.pixmap.save(fname + '.png', quality = 100)
+
+        for file in self.file_array:
+            self.pixmap = QtGui.QPixmap(file)
+            fname, _ = QFileDialog.getSaveFileName(None, "Save Image")
+            self.pixmap.save(fname + '.png', quality = 100)
 
 
 if __name__ == "__main__":
@@ -96,4 +133,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
