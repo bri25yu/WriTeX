@@ -1,0 +1,7 @@
+- [ ] Implement run_model functionality
+- [ ] Fix layers
+
+- [ ] Connect everything lol
+- [ ] Modularize and clean up UI
+- [ ] Implement camera system so user can hold up paper and convert it
+- [ ] Implement color functionality
