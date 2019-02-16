@@ -3,6 +3,7 @@
 # Library imports
 import numpy as np, cv2
 from tensorflow.python.keras.utils import to_categorical
+import argparse
 
 def check_folder_style(folder_name):
         """
@@ -42,7 +43,7 @@ def append_data(data, labels, fname, name):
         >>> labels[0]
         'bob'
         """
-        image = cv2.imread(fname)
+        image = cv2.imread(fname, cv2.IMREAD_GRAYSCALE)
         assert image is not None, "No image found at: " + fname
         data.append(np.array(image))
         labels.append(name)
@@ -88,3 +89,13 @@ def get_pool_args(data, labels, from_dir, num_classes):
         """ Returns an array of the set of distrubuted data processing for Thread pooling. """
         return [tuple([data, labels, from_dir, i]) for i in range(num_classes)]
 
+def get_parser():
+    parser = argparse.ArgumentParser(description="Utilize the CNN")
+    parser.add_argument("--train", help="Train the CNN", action="store_true")
+    parser.add_argument("--evaluate", help="Evaluate the CNN", action="store_true")
+    parser.add_argument("--predict", help="Use the CNN to predict some values", action="store_true")
+    parser.add_argument("model_dir")
+    parser.add_argument("args_dir")
+    return parser
+
+    

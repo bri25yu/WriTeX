@@ -9,7 +9,7 @@ from tensorflow.python.keras.optimizers import *
 # Other library imports
 import numpy as np, cv2
 from multiprocessing.dummy import Pool as ThreadPool 
-import os
+import os, argparse
 
 # Custom library imports
 from recognition_lib import *
@@ -26,19 +26,19 @@ class Network:
                     testing_dir = None, 
                     batch_size = 1024, 
                     epochs = 10):
-        my_model = CNN(model_dir=model_dir, training_dir=training_dir, testing_dir=testing_dir)
-        my_model.create_model()
+        my_model = self.CNN(model_dir=model_dir, training_dir=training_dir, testing_dir=testing_dir)
         my_model.process_data()
-        my_model.train_model()
+        my_model.create_model()
+        my_model.train_model(batch_size=batch_size, epochs=epochs)
 
     def evaluate_model(self, model_dir, testing_dir):
-        my_model = CNN(model_dir=model_dir, testing_dir=testing_dir)
-        my_model.load_previous_model()
+        my_model = self.CNN(model_dir=model_dir, testing_dir=testing_dir)
         my_model.process_data()
+        my_model.load_previous_model()
         my_model.evaluate_model()
 
-    def run_model(self, model_dir, run_dir):
-        pass
+    def predict(self, model_dir, predict_dir):
+        my_model = self.CNN()
 
     class CNN:
         IMAGE_SIZE, TESTING_TO_TRAINING_RATIO = 45, 0.05
@@ -51,8 +51,8 @@ class Network:
             @param testing_dir: Directory to get the testing data from
             """
             self.model_dir = check_folder_style(model_dir)
-            self.training_dir = check_folder_style(kwargs['training_dir']) if 'training_dir' in kwargs else None
-            self.testing_dir = check_folder_style(kwargs['testing_dir']) if 'testing_dir' in kwargs else None
+            self.training_dir = check_folder_style(kwargs['training_dir']) if kwargs['training_dir'] else None
+            self.testing_dir = check_folder_style(kwargs['testing_dir']) if kwargs['testing_dir'] else None
 
         # ----------------------------------------------------------------------------------
         # Actual methods
@@ -61,17 +61,17 @@ class Network:
 
         def train_model(self, epochs, batch_size):
             """ Will automatically evaluate model on testing data. """
-            args = tuple(
+            args = tuple((
                         np.array(self.training_data), 
                         np.array(self.training_labels)
-                        )
+                        ))
             kwargs = {
                         'epochs' : epochs, 
                         'batch_size' : batch_size, 
                         'shuffle' : True
                     }
             if self.testing_data:
-                kwargs['validation_data'] = tuple(self.testing_data, self.testing_labels)
+                kwargs['validation_data'] = tuple((self.testing_data, self.testing_labels))
             else:
                 kwargs['validation_split'] = self.TESTING_TO_TRAINING_RATIO
             self.model.fit(*args, **kwargs)
@@ -147,10 +147,10 @@ class Network:
                 self.testing_labels = categorize_labels(self.testing_labels, self.num_classes)
                 print("Finished loading testing data")
 
-        # TODO!!!!!
         def get_layers(self):
             """ Set the layers of the CNN. """
-            FEATURES, KERNEL = [1, 32, 64, 128, 256], [6, 5, 4, 3, 3]
+            FEATURES = [self.IMAGE_SIZE*self.IMAGE_SIZE, 32, 32, 32]
+            KERNEL = [6, 5, 4, 3]
             LAYERS = len(KERNEL)
 
             self.model.add(Conv2D(FEATURES[0], KERNEL[0], input_shape = (self.IMAGE_SIZE, self.IMAGE_SIZE, 3), padding='same', activation='relu'))
@@ -164,12 +164,31 @@ class Network:
             self.model.add(Dense(self.num_classes, activation='softmax'))
 
 def main():
-    # Default training and testing data directories:
-    TRAIN_DIR, TEST_DIR = 'C:\\Users\\bri25\\Documents\\Python\\data\\', None
-    MODEL_DIR = 'data/'
-    my_network = Network(TRAIN_DIR, MODEL_DIR, TEST_DIR)
-    my_network.process_data()
-    my_network.create_model()
+    parser = get_parser()
+    args = parser.parse_args()
+    my_network = Network()
+
+    model_dir = args.model_dir
+    if args.train:
+        training_dir = args.args_dir
+        testing_dir = input("Please enter an additional testing data directory: \n")
+        batch_size = int(input("Enter a batch_size. Default is 1024. \n"))
+        epochs = int(input("Enter the number of training epochs. Default is 10. \n"))
+        my_network.train_model(
+                                model_dir, 
+                                training_dir, 
+                                testing_dir=testing_dir, 
+                                batch_size=batch_size, 
+                                epochs=epochs
+                              )
+    elif args.evaluate:
+        testing_dir = args.args_dir
+        my_network.evaluate_model(model_dir, testing_dir)
+    elif args.predict:
+        predict_dir = args.args_dir
+        my_network.predict(model_dir, predict_dir)
+    else:
+        print("Please enter a valid combination of command line arguments")
     
 if __name__ == '__main__':
     main()

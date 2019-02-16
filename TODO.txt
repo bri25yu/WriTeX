@@ -5,3 +5,15 @@
 - [ ] Modularize and clean up UI
 - [ ] Implement camera system so user can hold up paper and convert it
 - [ ] Implement color functionality
+
+
+
+# recognition.main(TRAIN_DIR, SAVE_DIR, TEST_DIR, train=False)
+# controller = Control(TRAIN_DIR, SAVE_DIR, TEST_DIR)
+# controller.run()
+# use CNN to process image pixels
+# user writes something
+# 2-3 second delay for the user to finish what they're writing
+# convert user writing into latex code
+# give user to the view pdf
+#user has option to resize things
